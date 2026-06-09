@@ -30,7 +30,9 @@ function CreateCabinForm({ setShowForm }) {
   });
 
   function onSubmit(data) {
-    mutate(data);
+    // console.log(data);
+
+    mutate({ ...data, image: data.image[0] });
   }
 
   function onError(error) {
@@ -114,7 +116,7 @@ function CreateCabinForm({ setShowForm }) {
           id="image"
           accept="image/*"
           disabled={isCreating}
-          {...register("description", {
+          {...register("image", {
             required: "This field is required",
           })}
         />
