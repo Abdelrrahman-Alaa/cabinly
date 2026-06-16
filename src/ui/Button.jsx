@@ -61,7 +61,7 @@ const Button = styled.button`
 
   ${(props) => sizes[props.size || "medium"]}
   ${(props) => variations[props.variation || "primary"]}
-  ${(props) => width[props.width || ""]}
+    ${(props) => width[props.width || ""]}
 `;
 
 export default Button;
