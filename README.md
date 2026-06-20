@@ -1,93 +1,117 @@
 # Cabinly
 
-A modern cabin and resort management system built with React and Vite. Cabinly provides a comprehensive dashboard for managing cabin properties, bookings, guest information, check-in/out processes, and analytics.
+Cabinly is a private cabin and resort management dashboard built with React,
+Vite, Supabase, TanStack Query, and styled-components. It supports daily
+operations for cabins, bookings, guests, check-ins, check-outs, account
+management, settings, and dashboard analytics.
 
 ## Features
 
-- **Authentication**: Secure user login and signup with password management
-- **Dashboard**: Real-time analytics with sales charts, duration analytics, and activity summaries
-- **Cabin Management**: Create, view, and manage cabin properties with pricing and availability
-- **Booking System**: Complete booking management with detailed booking information and status tracking
-- **Check-in/Check-out**: Track guest arrivals and departures with today's activity view
-- **User Management**: Manage user profiles and account settings
-- **Settings**: Configurable application settings for cabin features and pricing
-- **Responsive Design**: Mobile-friendly interface with modern UI components
+- **Authentication**: Login, signup, logout, password updates, profile updates,
+  and avatar uploads through Supabase Auth.
+- **Protected app shell**: Authenticated routes render inside the main app
+  layout; unauthenticated users are redirected to `/login`.
+- **Dashboard**: Recent bookings and stays, sales charts, duration chart,
+  statistics, and today's activity.
+- **Cabin management**: View, create, edit, duplicate, delete, filter, and sort
+  cabins with image uploads to Supabase Storage.
+- **Booking management**: Paginated booking table with status filters, sorting,
+  booking details, and delete actions.
+- **Check-in/check-out flow**: Confirm payment, optionally add breakfast during
+  check-in, and check out active stays.
+- **Settings**: Update operational settings such as breakfast price, booking
+  limits, and guest limits.
+- **User preferences**: Light/dark mode stored in local storage and initialized
+  from the system color scheme.
 
 ## Tech Stack
 
-- **Frontend Framework**: [React 19.2](https://react.dev)
-- **Build Tool**: [Vite 8](https://vitejs.dev)
-- **Routing**: [React Router v6](https://reactrouter.com)
-- **State Management**: [TanStack React Query](https://tanstack.com/query)
-- **Backend**: [Supabase](https://supabase.com)
-- **Styling**: [Styled Components](https://styled-components.com)
-- **Icons**: [React Icons](https://react-icons.github.io/react-icons)
-- **Code Quality**: ESLint with React Compiler support
+- **React**: `19.2.6`
+- **Vite**: `8.0.12`
+- **React Router**: `6.30.4`
+- **TanStack React Query**: `5.101.0`
+- **Supabase JS**: `2.107.0`
+- **styled-components**: `6.4.2`
+- **React Hook Form**: `7.77.0`
+- **Recharts**: `3.8.1`
+- **React Icons**: `5.6.0`
+- **ESLint**: `10.3.0`
+- **React Compiler**: enabled through `@vitejs/plugin-react`,
+  `@rolldown/plugin-babel`, and `babel-plugin-react-compiler`
 
 ## Project Structure
 
-```
+```text
 src/
-├── features/              # Feature modules organized by domain
-│   ├── authentication/    # Login, signup, user management
-│   ├── bookings/         # Booking management and display
-│   ├── cabins/           # Cabin management and listing
-│   ├── check-in-out/     # Check-in/out functionality
-│   ├── dashboard/        # Analytics and overview
-│   └── settings/         # Application settings
-├── pages/                # Page components (routed views)
-├── ui/                   # Reusable UI components
-├── hooks/                # Custom React hooks
-├── services/             # API services
-├── data/                 # Data utilities and sample data
-├── utils/                # Helper functions
-└── styles/               # Global styles
+|-- context/              # App-level context providers
+|-- data/                 # Seed data, uploader, and local image assets
+|-- features/             # Domain modules
+|   |-- authentication/   # Auth, signup, logout, user profile, avatar
+|   |-- bookings/         # Booking tables, detail views, and booking hooks
+|   |-- cabins/           # Cabin CRUD, filters, sorting, and forms
+|   |-- check-in-out/     # Check-in, check-out, and today's activity
+|   |-- dashboard/        # Stats, charts, recent activity
+|   `-- settings/         # Settings form and update hooks
+|-- hooks/                # Shared custom hooks
+|-- pages/                # Route-level page components
+|-- services/             # Supabase API functions
+|-- styles/               # Global styles and CSS variables
+|-- ui/                   # Reusable UI primitives and layout components
+`-- utils/                # Supabase client, constants, and helpers
 ```
+
+## Routes
+
+Protected routes render inside `AppLayout`:
+
+- `/dashboard`
+- `/bookings`
+- `/bookings/:bookingId`
+- `/checkin/:bookingId`
+- `/cabins`
+- `/users`
+- `/settings`
+- `/account`
+
+Public routes:
+
+- `/login`
+- `*` for the not-found page
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 16+
-- pnpm (or npm/yarn)
+- Node.js compatible with the installed Vite version
+- pnpm
+- A Supabase project with the required tables and storage buckets
 
 ### Installation
-
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd cabinly
-```
-
-2. Install dependencies:
 
 ```bash
 pnpm install
 ```
 
-3. Set up environment variables:
-   - Create a `.env.local` file in the root directory
-   - Add your Supabase credentials:
+### Environment Variables
 
+Create a local env file in the project root, for example `.env.local`, with:
+
+```bash
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 ```
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+
+The app reads these values in `src/utils/supabase.js`.
 
 ### Development
-
-Start the development server with hot module reloading:
 
 ```bash
 pnpm dev
 ```
 
-The application will be available at `http://localhost:5173`
+Vite starts the app at `http://localhost:5173` by default.
 
 ### Build
-
-Create an optimized production build:
 
 ```bash
 pnpm build
@@ -95,80 +119,66 @@ pnpm build
 
 ### Preview
 
-Preview the production build locally:
-
 ```bash
 pnpm preview
 ```
 
-### Linting
-
-Run ESLint to check code quality:
+### Lint
 
 ```bash
 pnpm lint
 ```
 
-## Key Components
+## Supabase Setup Notes
 
-### Pages
+The app expects these Supabase resources:
 
-- **Dashboard**: Overview with analytics and today's activity
-- **Cabins**: Cabin listing and management interface
-- **Bookings**: Complete booking management
-- **Check-in**: Today's check-in activity
-- **Account**: User profile and settings
-- **Settings**: Application configuration
-- **Login**: Authentication entry point
+- Tables used by the API layer: `cabins`, `bookings`, `guests`, and `settings`.
+- Storage buckets used by uploads: `cabin-images` and `avatars`.
+- Auth user metadata fields: `fullName` and `avatar`.
+- Booking and seed-data columns use camelCase names such as `startDate`,
+  `endDate`, `numGuests`, `numNights`, `totalPrice`, `nationalID`, and
+  `hasBreakfast`.
 
-### UI Components
+If seed uploads fail with a missing column error, check the Supabase table
+schema and schema cache before changing React code.
 
-Reusable components including:
+## API Layer
 
-- `Button`, `ButtonGroup`, `ButtonIcon`, `ButtonText`
-- `Form`, `FormRow`, `Input`, `Select`, `Textarea`, `Checkbox`, `FileInput`
-- `Table`, `Pagination`, `Modal`, `Menus`
-- `Spinner`, `SpinnerMini`, `Empty`, `ErrorFallback`
-- `Header`, `Sidebar`, `MainNav`, `Logo`
-- And more...
+Supabase calls are centralized in `src/services/`:
 
-### Hooks
+- `apiAuth.js`: signup, login, logout, current user, user profile updates, and
+  avatar uploads.
+- `apiBookings.js`: booking list queries, detail query, recent bookings/stays,
+  today's activity, updates, check-in/check-out status changes, and deletes.
+- `apiCabins.js`: cabin list, create/edit with image upload rollback, and
+  deletes.
+- `apiSettings.js`: fetch and update the single settings row.
 
-- `useLocalStorageState`: Persist state in localStorage
-- `useMoveBack`: Navigate back with router
+Server state is handled with TanStack Query v5 hooks in each feature folder.
+Mutations use v5 status names such as `isPending`.
 
-## API Services
+## Recent Project Updates
 
-Services located in `src/services/`:
+- Updated React/styled-components compatibility by moving component defaults
+  into prop reads instead of relying on `defaultProps`.
+- Fixed the cabin duplicate/create mutation shape so create actions no longer
+  get interpreted as edits.
+- Aligned mutation loading state with TanStack Query v5's `isPending`.
+- Guarded `UserAvatar` against a missing authenticated user.
+- Hardened `ProtectedRoute` so unauthenticated redirects do not render the
+  protected layout while navigation is in progress.
+- Kept the JSX-based seed uploader in `Uploader.jsx`; imports that render it
+  should target the `.jsx` file.
 
-- `apiBookings.js`: Booking-related API calls
-- `apiCabins.js`: Cabin management endpoints
-- `apiSettings.js`: Settings configuration endpoints
+## Development Notes
 
-## Features Highlights
-
-### React Compiler
-
-This project uses the React Compiler for improved performance. See [React Compiler documentation](https://react.dev/learn/react-compiler) for details.
-
-### State Management
-
-Uses TanStack React Query for efficient server state management with caching and automatic refetching.
-
-### Code Quality
-
-- ESLint configuration with React hooks and React refresh rules
-- Babel integration for advanced transpilation
-- React Compiler preset for optimizations
-
-## Contributing
-
-When adding new features:
-
-1. Create a new folder in `src/features/` for domain-specific features
-2. Keep UI components in `src/ui/`
-3. Create API services in `src/services/`
-4. Maintain component organization and reusability
+- Keep domain-specific logic in `src/features/<domain>/`.
+- Keep reusable visual primitives in `src/ui/`.
+- Keep Supabase access inside `src/services/`.
+- Prefer existing hooks and UI patterns before adding new abstractions.
+- Do not expose private Supabase keys in client-side environment variables;
+  use the publishable key only.
 
 ## License
 
