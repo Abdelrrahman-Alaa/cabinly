@@ -36,7 +36,7 @@ function ProtectedRoute({ children }) {
 
   // 4. If there IS a user, render the app
   if (isAuthenticated) return children;
-  return children;
+  return null;
 }
 
 export default ProtectedRoute;
